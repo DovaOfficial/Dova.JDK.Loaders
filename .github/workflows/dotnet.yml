@@ -23,7 +23,7 @@ jobs:
       with:
         gradle-version: wrapper
     - name: Run Gradle (Build)
-      run: ./src/Java/Dova.JDK.LoaderAgent/gradlew build
+      run: cd src/Java/Dova.JDK.LoaderAgent && ./gradlew build
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
