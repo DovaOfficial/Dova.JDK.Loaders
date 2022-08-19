@@ -348,3 +348,10 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+#Other files
+src/Java/Dova.JDK.LoaderAgent/.idea/*
+src/Java/Dova.JDK.LoaderAgent/.gradle/*
+src/Java/Dova.JDK.LoaderAgent/build/*
+src/Java/Dova.JDK.LoaderAgent/tmp/*
+src/NET/.idea/*

@@ -1,0 +1,42 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: microsoft
+        java-version: 18
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: wrapper
+    - name: Run Gradle (Build)
+      run: ./src/Java/Dova.JDK.LoaderAgent/gradlew build
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Auth in NuGet
+      run: dotnet nuget add source --username Sejoslaw --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/DovaOfficial/index.json"
+    - name: Restore dependencies
+      run: dotnet restore -v diag src/NET/Dova.JDK.Loaders.sln
+    - name: Build
+      run: dotnet build --no-restore -v diag src/NET/Dova.JDK.Loaders/Dova.JDK.Loaders.csproj
+    - name: Test
+      run: dotnet test --no-build -v diag src/NET/Dova.JDK.Loaders/Dova.JDK.Loaders.csproj
+    - name: Pack
+      run: dotnet pack --configuration Release -v diag src/NET/Dova.JDK.Loaders/Dova.JDK.Loaders.csproj
+    - name: Publish NuGet
+      run: dotnet nuget push "src/NET/Dova.JDK.Loaders/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
