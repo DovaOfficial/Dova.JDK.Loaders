@@ -8,25 +8,13 @@ public static class JarLoader
 {
     public static void Load(params FileInfo[] paths)
     {
-        var assembly = typeof(JarLoader).Assembly;
-        var internalAgentJarName = assembly.GetManifestResourceNames()[0];
+        var resourceFilesPaths = typeof(JarLoader).Assembly
+            .ExtractResourceFiles()
+            .ToList();
 
-        byte[] agentJarContent;
+        var agentJarPath = resourceFilesPaths[0];
         
-        using (var agentJarStream = assembly.GetManifestResourceStream(internalAgentJarName))
-        {
-            using (var reader = new BinaryReader(agentJarStream))
-            {
-                agentJarContent = reader.ReadBytes((int)agentJarStream.Length);
-            }
-        }
-
-        var tmpPath = Path.GetTempPath();
-        var agentJarOutputPath = Path.Combine(tmpPath, internalAgentJarName);
-        
-        File.WriteAllBytes(agentJarOutputPath, agentJarContent);
-        
-        Load(agentJarOutputPath, paths);
+        Load(agentJarPath, paths);
     }
     
     public static void Load(string javaAgentJarFilePath, params FileInfo[] paths)
